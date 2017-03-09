@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Gets a crunchstat summary of a pipeline instance or job and scps into my local machine
+
 source ~/.bashrc
 UUID=$1
 CLUSTER=${UUID:0:5}

@@ -5,6 +5,11 @@ import re
 import subprocess
 import sys
 
+"""
+Cancels all child jobs in an Arvados CWL pipeline instance
+"""
+
+
 pi_uuid = sys.argv[1]
 
 resp = arvados.api().pipeline_instances().list(filters=[["uuid","=", pi_uuid]]).execute()
