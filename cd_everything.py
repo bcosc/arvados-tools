@@ -22,7 +22,8 @@ def run_tests():
   print list_project_uuid_with_name("170302-e00504-0041-bhh5ytalxx (2017-03-09T06:25:17.961Z)")
 
 def main():
-  print run_tests()
+  parent_project = raw_input('Whats the name of the parent project? ')
+  print list_subprojects(list_project_uuid_with_name(parent_project))
 
 if __name__ == '__main__':
   main()
