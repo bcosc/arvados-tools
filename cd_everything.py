@@ -2,6 +2,7 @@
 
 import arvados
 import re
+import sys
 
 def list_subprojects(owner_uuid):
   # List subprojects with owner_uuid=owner_uuid
@@ -42,15 +43,35 @@ def main():
   while True:
     parent_project = raw_input('Whats the name of the parent project? ')
     tab = raw_input('What tab do you want to see? ')
-    if re.match('subprojects', tab):
-      for item in list_subprojects(list_project_uuid_with_name(parent_project)):
-        print item
-    if re.match('data collections', tab):
-      for item in list_data_collections(list_project_uuid_with_name(parent_project)):
-        print item
-    if re.match('pipeline instances', tab):
-      for item in list_pipeline_instances(list_project_uuid_with_name(parent_project)):
-        print item
+    if re.match('(sub)?projects', tab, re.IGNORECASE):
+      items = list_subprojects(list_project_uuid_with_name(parent_project))
+      if not items:
+        print "There are no subprojects in this project"
+      else:
+        for item in items:
+          print item
+    if re.match('(data )?collections', tab, re.IGNORECASE):
+      items = list_data_collections(list_project_uuid_with_name(parent_project))
+      if not items:
+        print "There are no data collections in this project"
+      else:
+        for item in items:
+          print item
+    if re.match('pi.*(peline instances)?', tab, re.IGNORECASE):
+      items = list_pipeline_instances(list_project_uuid_with_name(parent_project))
+      if not items:
+        print "There are no pipeline instances in this project"
+      else:
+        for item in items:
+          print item
+    regex_break = [
+      "break",
+      "done",
+      "q(uit)?",
+    ]
+    combined = "(" + ")|(".join(regex_break) + ")"
+    if re.match(combined, tab, re.IGNORECASE):
+      sys.exit(0)
 
 if __name__ == '__main__':
   main()
