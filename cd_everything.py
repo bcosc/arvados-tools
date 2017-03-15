@@ -4,29 +4,45 @@ import arvados
 import re
 import sys
 
-# TODO Figure out a good API limit
+# TODO Figure out a good API limit (default=100), be able to return list based on number of calls
 
-def list_subprojects(owner_uuid):
+def list_all_projects(regex):
+  list = []
+  call = arvados.api().groups().list(filters=[["group_class","=","project"]], limit=1000).execute()
+  for i in xrange(0,call['items_available']):
+    if re.match(regex, call['items'][i]['name']):
+      list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
+  list.sort()
+  return list
+
+def list_subprojects(owner_uuid, regex):
   # List subprojects with owner_uuid=owner_uuid
   list = []
   call = arvados.api().groups().list(filters=[["owner_uuid","=",owner_uuid]], limit=1000).execute()
   for i in xrange(0,call['items_available']):
-    list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
+    if re.match(regex, call['items'][i]['name']):
+      list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
+  list.sort()
   return list
 
-def list_all_projects():
-  list = []
-  call = arvados.api().groups().list(filters=[["group_class","=","project"]], limit=1000).execute()
-  for i in xrange(0,call['items_available']):
-    list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
-  return list
-
-def list_data_collections(owner_uuid):
+def list_data_collections(owner_uuid, regex):
   # List collections with owner_uuid=owner_uuid
   list = []
   call = arvados.api().collections().list(filters=[["owner_uuid","=",owner_uuid]], limit=1000).execute()
   for i in xrange(0,call['items_available']):
-    list.append("%s %s %s" %( call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['portable_data_hash']))
+    if re.match(regex, call['items'][i]['name']):
+      list.append("%s %s %s" % (call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['portable_data_hash']))
+  list.sort()
+  return list
+
+def list_pipeline_instances(owner_uuid, regex):
+  # List pipeline instances with owner_uuid=owner_uuid
+  list = []
+  call = arvados.api().pipeline_instances().list(filters=[["owner_uuid","=",owner_uuid]]).execute()
+  for i in xrange(0,call['items_available']):
+    if re.match(regex, call['items'][i]['name']):
+      list.append("%s %s" %( call['items'][i]['name'], call['items'][i]['uuid']))
+  list.sort()
   return list
 
 def list_sharing(owner_uuid):
@@ -37,14 +53,6 @@ def list_sharing(owner_uuid):
   for uuid in writable_uuids:
     user = arvados.api().users().get(uuid=uuid).execute()
     list.append("Writable by %s %s" % (user['full_name'], uuid))
-  return list
-
-def list_pipeline_instances(owner_uuid):
-  # List pipeline instances with owner_uuid=owner_uuid
-  list = []
-  call = arvados.api().pipeline_instances().list(filters=[["owner_uuid","=",owner_uuid]]).execute()
-  for i in xrange(0,call['items_available']):
-    list.append("%s %s" %( call['items'][i]['name'], call['items'][i]['uuid']))
   return list
 
 def list_project_uuid_with_name(project_name):
@@ -72,7 +80,7 @@ def main():
     if re.match('list( all)?', parent_project):
       items = list_all_projects()
       if not items:
-        print "There are no projects in this cluster (maybe you need to switch tokens?)"
+        print "There are no projects in this cluster. (maybe you need to switch tokens?)"
       else:
         for item in items:
           print item
@@ -81,28 +89,36 @@ def main():
     # Tabs in projects, update when more are added 
     tabs = ['(sub)?projects', '(data )?collections', 'pi.*(peline instances)?', 'shar.*(ing)?']
     if not check_tab_input(tab, tabs):
-      print "Tabs are 'subprojects', 'data collections', 'pipeline instances', and sharing"
+      print "Tabs are 'subprojects', 'data collections', 'pipeline instances', and 'sharing'"
+    match = raw_input('Enter a regex of what you want to see: ')
+    match = ".*%s.*" % match
     if re.match('(sub)?projects', tab, re.IGNORECASE):
-      items = list_subprojects(list_project_uuid_with_name(parent_project))
+      items = list_subprojects(list_project_uuid_with_name(parent_project), regex=match)
       if not items:
-        print "There are no subprojects in this project"
+        print "There are no subprojects in this project."
       else:
         for item in items:
           print item
-    if re.match('(data )?coll.*(ections)?', tab, re.IGNORECASE):
-      items = list_data_collections(list_project_uuid_with_name(parent_project))
+        print ' '
+
+    if re.match('(data)?.*coll.*(ections)?', tab, re.IGNORECASE):
+      items = list_data_collections(list_project_uuid_with_name(parent_project), regex=match)
       if not items:
-        print "There are no data collections in this project"
+        print "There are no data collections in this project."
       else:
         for item in items:
           print item
+        print ' '
+
     if re.match('pi.*(peline instances)?', tab, re.IGNORECASE):
-      items = list_pipeline_instances(list_project_uuid_with_name(parent_project))
+      items = list_pipeline_instances(list_project_uuid_with_name(parent_project), regex=match)
       if not items:
-        print "There are no pipeline instances in this project"
+        print "There are no pipeline instances in this project."
       else:
         for item in items:
           print item
+        print ' '
+
     if re.match('shar.*(ing)?', tab, re.IGNORECASE):
       items = list_sharing(list_project_uuid_with_name(parent_project))
       if not items:
@@ -110,6 +126,7 @@ def main():
       else:
         for item in items:
           print item
+        print ' '
     regex_break = [
       'break',
       'done',
