@@ -12,6 +12,13 @@ def list_subprojects(owner_uuid):
     list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
   return list
 
+def list_all_projects():
+  list = []
+  call = arvados.api().groups().list(filters=[["group_class","=","project"]]).execute()
+  for i in xrange(0,call['items_available']):
+    list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
+  return list
+
 def list_data_collections(owner_uuid):
   # List collections with owner_uuid=owner_uuid
   list = []
@@ -34,15 +41,34 @@ def list_project_uuid_with_name(project_name):
   if call['items_available'] == 1:
     return call['items'][0]['uuid']
 
-def run_tests():
+def run_tests(): # Have some way to run this
   # Run tests
   print list_subprojects("e51c5-j7d0g-juq4oe6mqtwffge")
   print list_project_uuid_with_name("170302-e00504-0041-bhh5ytalxx (2017-03-09T06:25:17.961Z)")
 
+def check_tab_input(tab, tabs):
+  match = False
+  for item in tabs: 
+    if re.match(item, tab):
+      match = True
+  return match
+
 def main():
   while True:
-    parent_project = raw_input('Whats the name of the parent project? ')
+    parent_project = raw_input('Whats the name of the parent project ("list" to see all projects)? ')
+    if re.match('list( all)?', parent_project):
+      items = list_all_projects()
+      if not items:
+        print "There are no projects in this cluster (maybe you need to switch tokens?)"
+      else:
+        for item in items:
+          print item
+      continue
     tab = raw_input('What tab do you want to see? ')
+    # Tabs in projects, update when more are added 
+    tabs = ['(sub)?projects', '(data )?collections', 'pi.*(peline instances)?']
+    if not check_tab_input(tab, tabs):
+      print "Tabs are 'subprojects', 'data collections', and 'pipeline instances'"
     if re.match('(sub)?projects', tab, re.IGNORECASE):
       items = list_subprojects(list_project_uuid_with_name(parent_project))
       if not items:
@@ -50,7 +76,7 @@ def main():
       else:
         for item in items:
           print item
-    if re.match('(data )?collections', tab, re.IGNORECASE):
+    if re.match('(data )?coll.*(ections)?', tab, re.IGNORECASE):
       items = list_data_collections(list_project_uuid_with_name(parent_project))
       if not items:
         print "There are no data collections in this project"
@@ -65,9 +91,9 @@ def main():
         for item in items:
           print item
     regex_break = [
-      "break",
-      "done",
-      "q(uit)?",
+      'break',
+      'done',
+      'q(uit)?',
     ]
     combined = "(" + ")|(".join(regex_break) + ")"
     if re.match(combined, tab, re.IGNORECASE):
