@@ -7,14 +7,15 @@ import sys
 def list_subprojects(owner_uuid):
   # List subprojects with owner_uuid=owner_uuid
   list = []
-  call = arvados.api().groups().list(filters=[["owner_uuid","=",owner_uuid]]).execute()
+  call = arvados.api().groups().list(filters=[["owner_uuid","=",owner_uuid]], limit=call['items_avai
+lable'])).execute()
   for i in xrange(0,call['items_available']):
     list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
   return list
 
 def list_all_projects():
   list = []
-  call = arvados.api().groups().list(filters=[["group_class","=","project"]]).execute()
+  call = arvados.api().groups().list(filters=[["group_class","=","project"]], limit=call['items_available']).execute()
   for i in xrange(0,call['items_available']):
     list.append("%s %s" % (call['items'][i]['name'], call['items'][i]['uuid']))
   return list
@@ -22,7 +23,8 @@ def list_all_projects():
 def list_data_collections(owner_uuid):
   # List collections with owner_uuid=owner_uuid
   list = []
-  call = arvados.api().collections().list(filters=[["owner_uuid","=",owner_uuid]]).execute()
+  call = arvados.api().collections().list(filters=[["owner_uuid","=",owner_uuid]], limit=call['items_avai
+lable'])).execute()
   for i in xrange(0,call['items_available']):
     list.append("%s %s %s" %( call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['portable_data_hash']))
   return list
