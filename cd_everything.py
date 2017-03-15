@@ -7,6 +7,7 @@ import sys
 # TODO Figure out a good API limit (default=100), be able to return list based on number of calls
 
 def list_all_projects(regex):
+  # List all projects within a cluster
   list = []
   call = arvados.api().groups().list(filters=[["group_class","=","project"]], limit=1000).execute()
   for i in xrange(0,call['items_available']):
@@ -61,10 +62,27 @@ def list_project_uuid_with_name(project_name):
   if call['items_available'] == 1:
     return call['items'][0]['uuid']
 
-def run_tests(): # Have some way to run this
-  # Run tests
-  print list_subprojects("e51c5-j7d0g-juq4oe6mqtwffge")
-  print list_project_uuid_with_name("170302-e00504-0041-bhh5ytalxx (2017-03-09T06:25:17.961Z)")
+class RunTests():
+  # TODO: Add tests for listing data collections, subprojects, pipeline instances, sharing
+  # Have a way to make sure were on qr1hi
+  # use qr1hi-j7d0g-wxcsn23onv6cdjo, 3 data collections, 2 pipeline instances, 2 subprojects, 1 sharing
+  # Add tests for regex too
+  def test_list_subprojects(self):
+    number = list_subprojects("qr1hi-j7d0g-wxcsn23onv6cdjo", regex=".*")
+    if len(number) != 2:
+      print "list_subprojects test failed"
+  def test_list_data_collections(self):
+    number = list_data_collections("qr1hi-j7d0g-wxcsn23onv6cdjo", regex=".*")
+    if len(number) != 3:
+      print "list_data_collections test failed"
+  def test_list_subprojects(self):
+    number = list_subprojects("qr1hi-j7d0g-wxcsn23onv6cdjo", regex=".*")
+    if len(number) != 2:
+      print "list_data_collections test failed"
+  def test_list_sharing(self):
+    number = list_sharing("qr1hi-j7d0g-wxcsn23onv6cdjo")
+    if len(number) != 2:
+      print "list_sharing test failed"
 
 def check_tab_input(tab, tabs):
   match = False
@@ -75,6 +93,15 @@ def check_tab_input(tab, tabs):
 
 def main():
   # TODO: Don't ask for parent_project when tab is wrong
+  if sys.argv[1] == "run_tests":
+    run = RunTests()
+    run.test_list_subprojects()
+    run.test_list_data_collections()
+    run.test_list_subprojects()
+    run.test_list_sharing()
+    print "Test suite complete"
+    sys.exit(0)
+
   while True:
     parent_project = raw_input('Whats the name of the parent project ("list" to see all projects)? ')
     if re.match('list( all)?', parent_project):
