@@ -27,6 +27,16 @@ def list_data_collections(owner_uuid):
     list.append("%s %s %s" %( call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['portable_data_hash']))
   return list
 
+def list_sharing(owner_uuid):
+  # List sharing with owner_uuid=owner_uuid
+  list = []
+  call = arvados.api().groups().get(uuid=owner_uuid).execute()
+  writable_uuids = call['writable_by']
+  for uuid in writable_uuids:
+    user = arvados.api().users().get(uuid=uuid).execute()
+    list.append("Writable by %s %s" % (user['full_name'], uuid))
+  return list
+
 def list_pipeline_instances(owner_uuid):
   # List pipeline instances with owner_uuid=owner_uuid
   list = []
@@ -54,6 +64,7 @@ def check_tab_input(tab, tabs):
   return match
 
 def main():
+  # TODO: Don't ask for parent_project when tab is wrong
   while True:
     parent_project = raw_input('Whats the name of the parent project ("list" to see all projects)? ')
     if re.match('list( all)?', parent_project):
@@ -66,9 +77,9 @@ def main():
       continue
     tab = raw_input('What tab do you want to see? ')
     # Tabs in projects, update when more are added 
-    tabs = ['(sub)?projects', '(data )?collections', 'pi.*(peline instances)?']
+    tabs = ['(sub)?projects', '(data )?collections', 'pi.*(peline instances)?', 'shar.*(ing)?']
     if not check_tab_input(tab, tabs):
-      print "Tabs are 'subprojects', 'data collections', and 'pipeline instances'"
+      print "Tabs are 'subprojects', 'data collections', 'pipeline instances', and sharing"
     if re.match('(sub)?projects', tab, re.IGNORECASE):
       items = list_subprojects(list_project_uuid_with_name(parent_project))
       if not items:
@@ -90,6 +101,13 @@ def main():
       else:
         for item in items:
           print item
+    if re.match('shar.*(ing)?', tab, re.IGNORECASE):
+      items = list_sharing(list_project_uuid_with_name(parent_project))
+      if not items:
+        print "This project is not writable by anyone."
+      else:
+        for item in items:
+          print item
     regex_break = [
       'break',
       'done',
@@ -97,6 +115,8 @@ def main():
     ]
     combined = "(" + ")|(".join(regex_break) + ")"
     if re.match(combined, tab, re.IGNORECASE):
+      sys.exit(0)
+    if re.match(combined, parent_project, re.IGNORECASE):
       sys.exit(0)
 
 if __name__ == '__main__':
