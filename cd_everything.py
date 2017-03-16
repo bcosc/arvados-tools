@@ -93,14 +93,15 @@ def check_tab_input(tab, tabs):
 
 def main():
   # TODO: Don't ask for parent_project when tab is wrong
-  if sys.argv[1] == "run_tests":
-    run = RunTests()
-    run.test_list_subprojects()
-    run.test_list_data_collections()
-    run.test_list_subprojects()
-    run.test_list_sharing()
-    print "Test suite complete"
-    sys.exit(0)
+  # TODO IMPORTANT: have flag for run tests, not just sys.argv[1]
+  #if sys.argv[1] == "run_tests":
+  #  run = RunTests()
+  #  run.test_list_subprojects()
+  #  run.test_list_data_collections()
+  #  run.test_list_subprojects()
+  #  run.test_list_sharing()
+  #  print "Test suite complete"
+  #  sys.exit(0)
 
   while True:
     parent_project = raw_input('Whats the name of the parent project ("list" to see all projects)? ')

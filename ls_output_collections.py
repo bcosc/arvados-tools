@@ -11,6 +11,7 @@ This script allows users to take a CWL pipeline instance and find outputs
 for multiple patterns of jobs and print an ls -lah of them.
 
 """
+# TODO recursively ls collections
 
 if len(sys.argv) <= 2:
   print "Usage: python ls_output_collections.py pi_uuid keep_mount job_pattern1 job_pattern2 ..."
@@ -34,4 +35,4 @@ for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components'
       uuid = resp.items()[1][1][0]['components']['cwl-runner']['job']['components'][job]
       jobresp = arvados.api().jobs().list(filters=[["uuid", "=", uuid]]).execute()
       output_hash = jobresp.items()[1][1][0]['output']
-      print subprocess.check_output(['ls','-lah',os.path.join(keep_mount,output_hash)])
+      print subprocess.check_output(['ls','-Rlah',os.path.join(keep_mount,output_hash)])
