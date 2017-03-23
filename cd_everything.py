@@ -32,6 +32,8 @@ def list_data_collections(owner_uuid, regex):
   list = []
   call = arvados.api().collections().list(filters=[["owner_uuid","=",owner_uuid]], limit=1000).execute()
   for i in xrange(0,call['items_available']):
+    if not call['items'][i]['name']:
+      continue
     if re.match(regex, call['items'][i]['name']):
       list.append("%s %s %s" % (call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['portable_data_hash']))
   list.sort()
@@ -97,9 +99,9 @@ def main():
   # TODO IMPORTANT: have flag for run tests, not just sys.argv[1]
 
   parser = argparse.ArgumentParser()
-  parser.add_argument('--runtests', help='Run unit tests', default="True")
+  parser.add_argument('--runtests', help='Run unit tests', default="False")
   args = parser.parse_args()
-  if 'runtests' in args:
+  if args.runtests == True:
     run = RunTests()
     run.test_list_subprojects()
     run.test_list_data_collections()

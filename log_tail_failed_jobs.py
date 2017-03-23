@@ -16,12 +16,12 @@ TODO: out.write statement comes after subprocess.check_call
 
 tail_lines = '40'
 
-if len(sys.argv) == 1:
-  print "Usage: python look-at-logs.py pi_uuid keep_mount outdir"
+if len(sys.argv) <= 3:
+  print "Usage: python log_tail_failed_jobs.py pi_uuid keep_mount outdir"
   sys.exit(0)
 
 if re.match('-h.*', sys.argv[1]):
-  print "Usage: python look-at-logs.py pi_uuid keep_mount outdir"
+  print "Usage: python log_tail_failed_jobs.py pi_uuid keep_mount outdir"
   sys.exit(0)
 
 pi_uuid = sys.argv[1]
