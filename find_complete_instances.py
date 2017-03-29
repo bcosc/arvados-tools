@@ -13,7 +13,9 @@ filter = "%" + name + "%"
 completes = ""
 call = arvados.api().pipeline_instances().list(filters=[["name","like",filter]]).execute()
 total = call['items_available']
+print total
 for num in xrange(0,total):
+  print num
   if call['items'][num]['state'] == 'Complete': # api returns in order of time by default so this should get the latest complete instance.
     completes = call['items'][num]['uuid']
     print "%s %s" % (completes, call['items'][num]['name'])

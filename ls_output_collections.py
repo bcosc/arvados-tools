@@ -35,4 +35,5 @@ for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components'
       uuid = resp.items()[1][1][0]['components']['cwl-runner']['job']['components'][job]
       jobresp = arvados.api().jobs().list(filters=[["uuid", "=", uuid]]).execute()
       output_hash = jobresp.items()[1][1][0]['output']
+      print job
       print subprocess.check_output(['ls','-Rlah',os.path.join(keep_mount,output_hash)])
