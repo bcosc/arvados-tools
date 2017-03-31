@@ -29,9 +29,12 @@ cluster_uuid = pi_uuid.split('-')[0]
 
 resp = arvados.api().pipeline_instances().list(filters=[["uuid","=", pi_uuid]]).execute()
 
-
-
 for item in resp.items()[1][1][0]['components']['cwl-runner']['script_parameters']:
   for pattern in job_patterns:
     if re.match(pattern, item):
-      print resp.items()[1][1][0]['components']['cwl-runner']['script_parameters'][item]['value']['location']
+      try: # If there's only one file, there's keys, if its a list, theres more than one file
+        resp.items()[1][1][0]['components']['cwl-runner']['script_parameters'][item]['value'].keys()
+        print resp.items()[1][1][0]['components']['cwl-runner']['script_parameters'][item]['value']['location']
+      except: # if the input is a file[]
+        for val in resp.items()[1][1][0]['components']['cwl-runner']['script_parameters'][item]['value']:#['location']
+          print val['location']
