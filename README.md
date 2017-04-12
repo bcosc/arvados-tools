@@ -28,3 +28,11 @@ Takes a CWL pipeline instance and find outputs for multiple patterns of jobs and
 #### move_outputs_into_one_project.py
 
 Takes a CWL pipeline instance and find outputs for multiple patterns jobs and move all the outputs of those jobs into one project.
+
+#### pdhify.py
+
+Takes a uuid and outputs a pdh
+
+#### search_for_files.py
+
+Find a uuid/pdh of a collection using a file name and collection name
