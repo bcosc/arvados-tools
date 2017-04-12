@@ -36,7 +36,7 @@ def main():
 
   call = arvados.api().collections().list(filters=filters, limit=limit).execute()
 
-  if call['items_available'] < limit:
+  if int(call['items_available']) < int(limit):
     limit = call['items_available']
 
   print "There are %s available files on the cluster, showing you the first %s." % (call['items_available'], limit)
