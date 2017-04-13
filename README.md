@@ -31,8 +31,8 @@ Takes a CWL pipeline instance and find outputs for multiple patterns jobs and mo
 
 #### pdhify.py
 
-Takes a uuid and outputs a pdh
+Takes a uuid and outputs a pdh.
 
 #### search_for_files.py
 
-Find a uuid/pdh of a collection using a file name and collection name
+Find a uuid/pdh of a collection using a file name and collection name.
