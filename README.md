@@ -24,7 +24,6 @@ Finds complete instances with a user input name.
 #### get-crunchstat-summary.sh
 
 Gets a crunchstat summary of a pipeline instance or job and scps into your local machine (Requires correct IP to scp into)
-
 #### get_pdh_of_all_output.py
 
 This script allows users to take a CWL pipeline instance and finds the portable data hash for the output of patterns of jobs
@@ -56,6 +55,10 @@ Takes a uuid and outputs a pdh.
 #### search_for_files.py
 
 Find a uuid/pdh of a collection using a file name and collection name.
+
+#### subscribe_pipelines.py
+
+Subscribes to pipelines using arv ws and prints out when a pipeline is complete
 
 #### uuidify.py
 
