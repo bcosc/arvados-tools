@@ -6,8 +6,8 @@ import subprocess
 import sys
 
 """
-This script allows users to take a CWL pipeline instance and copy outputs
-and log collections and the instance to another project
+This script allows users to take a CWL pipeline instance and copy 
+child job outputs and log collections and the instance to another project
 
 """
 
@@ -35,3 +35,4 @@ for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components'
   subprocess.check_call(['arv-copy', '--src', cluster_uuid, '--dst', cluster_uuid, '--project-uuid', project_uuid, output_pdh])
   log_pdh = jobresp.items()[1][1][0]['log']
   subprocess.check_call(['arv-copy', '--src', cluster_uuid, '--dst', cluster_uuid, '--project-uuid', project_uuid, log_pdh])
+  

@@ -7,8 +7,8 @@ import sys
 import os
 
 """
-This script allows users to take a CWL pipeline instance and find outputs 
-for multiple patterns of jobs and print an ls -lah of them.
+This script allows users to take a CWL pipeline instance and finds the input
+for the pipeline instance and prints the location
 
 """
 # TODO recursively ls collections
