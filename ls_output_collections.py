@@ -37,3 +37,5 @@ for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components'
       output_hash = jobresp.items()[1][1][0]['output']
       print job
       print subprocess.check_output(['ls','-Rlah',os.path.join(keep_mount,output_hash)])
+      for file in os.listdir(os.path.join(keep_mount, output_hash)):
+        print os.path.join(output_hash, file)
