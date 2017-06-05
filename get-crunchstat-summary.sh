@@ -13,7 +13,7 @@ if [ ! -d $OUTDIR/$UUID ]; then
 fi
 
 if [[ $UUID =~ d1hrv ]]; then
-  source ~/10359-crunchstat-summary-serial/bin/activate
+  source ~/10359-crunchstat-summary-serial-2/bin/activate
   ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format html > $OUTDIR/$UUID/$UUID.html
   ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi

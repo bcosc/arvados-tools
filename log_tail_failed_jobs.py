@@ -33,6 +33,7 @@ for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components'
   uuid = resp.items()[1][1][0]['components']['cwl-runner']['job']['components'][job]
   jobresp = arvados.api().jobs().list(filters=[["uuid", "=", uuid]]).execute()
   log_hash = jobresp.items()[1][1][0]['log']
+  print jobresp.items()[1][1][0]['state']
   if jobresp.items()[1][1][0]['state'] == 'Failed':
     with open('fails_%s_logs.txt' % pi_uuid,'a') as outfile:
       for file in os.listdir(os.path.join(keep_mount, log_hash)):
