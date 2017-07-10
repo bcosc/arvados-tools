@@ -19,7 +19,7 @@ if [[ $UUID =~ d1hrv ]]; then
 fi
 
 if [[ $UUID =~ 8i9sb ]]; then
-  source ~/cs/bin/activate
+  #source ~/cs/bin/activate
   ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format html > $OUTDIR/$UUID/$UUID.html
   ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi
