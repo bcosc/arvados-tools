@@ -11,9 +11,9 @@ def on_message(ev):
   event_type_options = ['update', 'create']
   if ev.get("event_type") in event_type_options and ev.get("object_kind") in object_kind_options and ev["properties"]["new_attributes"]["state"] in properties_options:
     print "%s %s %s" % (ev.get("object_kind"), ev["object_uuid"], ev["properties"]["new_attributes"]["state"])
-  if ev["properties"]["new_attributes"]["state"] == "Failed"
+  if ev.get("event_type") in event_type_options and ev.get("object_kind") in object_kind_options and ev["properties"]["new_attributes"]["state"] == "Failed":
     header = "%s %s %s" % (ev.get("object_kind"), ev["object_uuid"], ev["properties"]["new_attributes"]["state"])
-    subprocess.check_call(['email-me.py', '-d', header])
+    subprocess.check_call(['/home/bcosc/gitrepos/arv-email/email-me.py', '-d', header])
 
 api = arvados.api("v1")
 ws = arvados.events.subscribe(api, [], on_message)
