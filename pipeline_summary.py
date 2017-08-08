@@ -4,6 +4,7 @@ import arvados
 import re
 import subprocess
 import sys
+from arvados.collection import Collection
 
 """
 This script outputs a summary of a pipeline instance
@@ -23,6 +24,11 @@ def child_jobs_components_summary(instance_response):
     else:
       summary[state] += 1
   return summary, fails
+
+def print_tail_job_log(job_uuid):
+  jobresp = arvados.api().jobs().list(filters=[["uuid", "=", uuid]]).execute()
+  log_hash = jobresp.items()[1][1][0]['log']
+  # not finished
 
 def main():
   if len(sys.argv) != 2:
