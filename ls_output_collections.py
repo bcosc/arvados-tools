@@ -48,17 +48,10 @@ def pipeline_instance(uuid, patterns):
           print os.path.join(output_pdh,file)
 
 def main():
-  if len(sys.argv) <= 2:
-    print "Usage: python ls_output_collections.py [pipeline_instance_uuid or collection_request_uuid] job_pattern1 job_pattern2 ..."
-    sys.exit(0)
-
-  if re.match('-h.*', sys.argv[1]):
-    print "Usage: python ls_output_collections.py [pipeline_instance_uuid or collection_request_uuid] job_pattern1 job_pattern2 ..."
-    sys.exit(0)
 
   parser = argparse.ArgumentParser()
   parser.add_argument('wf_uuid', metavar='UUID', help='pipeline_instance_uuid or collection_request_uuid')
-  parser.add_argument('patterns', nargs='*', help='job patterns to get output from')
+  parser.add_argument('patterns', nargs='*', help='job patterns to get output from (e.g. catfastqs)')
   args = parser.parse_args()
 
   if re.match('.*d1hrv.*', args.wf_uuid):
