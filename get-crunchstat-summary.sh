@@ -14,14 +14,14 @@ fi
 
 if [[ $UUID =~ d1hrv ]]; then
   source ~/10359-crunchstat-summary-serial-2/bin/activate
-  ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format html > $OUTDIR/$UUID/$UUID.html
-  ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format text > $OUTDIR/$UUID/$UUID.txt
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format html #> $OUTDIR/$UUID/$UUID.html
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format text #> $OUTDIR/$UUID/$UUID.txt
 fi
 
 if [[ $UUID =~ 8i9sb ]]; then
   #source ~/cs/bin/activate
-  ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format html > $OUTDIR/$UUID/$UUID.html
-  ~/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format text > $OUTDIR/$UUID/$UUID.txt
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format html > $OUTDIR/$UUID/$UUID.html
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi
 
 scp -r -P12345 $OUTDIR/$UUID/ 127.0.0.1:$OUTDIR

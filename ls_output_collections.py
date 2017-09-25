@@ -9,7 +9,7 @@ from arvados.collection import Collection
 import argparse
 
 """
-This script allows users to take a CWL pipeline instance and find outputs 
+This script allows users to take a CWL pipeline instance and find outputs
 for multiple patterns of jobs and print an ls -lah of them.
 
 """
@@ -29,7 +29,7 @@ def container_request(uuid, patterns):
       for file in Collection(output_pdh):
         print os.path.join(output_pdh,file)
 
-def pipeline_instance(uuid, patterns):
+def pipeline_instance(uuid, patterns, local):
 
   pi_uuid = uuid
   job_patterns = patterns
@@ -37,25 +37,37 @@ def pipeline_instance(uuid, patterns):
 
   resp = arvados.api().pipeline_instances().list(filters=[["uuid","=", pi_uuid]]).execute()
 
-  for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components']:
-    for pattern in job_patterns:
-      if re.match(pattern, job):
-        job_uuid = resp.items()[1][1][0]['components']['cwl-runner']['job']['components'][job]
-        jobresp = arvados.api().jobs().list(filters=[["uuid", "=", job_uuid]]).execute()
-        output_pdh = jobresp.items()[1][1][0]['output']
-        print job
-        for file in Collection(output_pdh):
-          print os.path.join(output_pdh,file)
+  if not local:
+    for job in resp.items()[1][1][0]['components']['cwl-runner']['job']['components']:
+      for pattern in job_patterns:
+        if re.match(pattern, job):
+          job_uuid = resp.items()[1][1][0]['components']['cwl-runner']['job']['components'][job]
+          jobresp = arvados.api().jobs().list(filters=[["uuid", "=", job_uuid]]).execute()
+          output_pdh = jobresp.items()[1][1][0]['output']
+          for file in Collection(output_pdh):
+            print os.path.join(output_pdh,file)
+  else:
+    for job in resp.items()[1][1][0]['components']:
+      for pattern in job_patterns:
+        if re.match(pattern, job):
+          job_uuid = resp.items()[1][1][0]['components'][job]['job']['uuid']
+          jobresp = arvados.api().jobs().list(filters=[["uuid", "=", job_uuid]]).execute()
+          output_pdh = jobresp.items()[1][1][0]['output']
+          print job
+          for file in Collection(output_pdh):
+            print os.path.join(output_pdh,file)
+
 
 def main():
 
   parser = argparse.ArgumentParser()
   parser.add_argument('wf_uuid', metavar='UUID', help='pipeline_instance_uuid or collection_request_uuid')
   parser.add_argument('patterns', nargs='*', help='job patterns to get output from (e.g. catfastqs)')
+  parser.add_argument('--local', help='use if cwl-runner job is not available, and workflow was run with --local', action='store_true')
   args = parser.parse_args()
-
+  print args
   if re.match('.*d1hrv.*', args.wf_uuid):
-    pipeline_instance(args.wf_uuid, args.patterns)
+    pipeline_instance(args.wf_uuid, args.patterns, args.local)
   elif re.match('.*xvhdp.*', args.wf_uuid):
     container_request(args.wf_uuid, args.patterns)
   else:

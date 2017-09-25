@@ -16,4 +16,4 @@ for u in collection_uuids:
     combined_manifest += c["manifest_text"]
 
 newcol = arvados.collection.Collection(combined_manifest)
-newcol.save_new(name="foobar", owner_uuid=project_uuid)
+newcol.save_new(name="foo", owner_uuid=project_uuid)
