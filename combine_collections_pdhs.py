@@ -17,5 +17,6 @@ for u in collection_uuids:
     combined_manifest += c["manifest_text"]
 
 newcol = arvados.collection.Collection(combined_manifest)
-print newcol.portable_data_hash()
 newcol.save_new(name="%s" % (str(newcol.keys()[0])), owner_uuid=project_uuid)
+print newcol.portable_data_hash()
+

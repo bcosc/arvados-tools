@@ -42,10 +42,10 @@ def list_data_collections(owner_uuid, regex):
 def list_pipeline_instances(owner_uuid, regex):
   # List pipeline instances with owner_uuid=owner_uuid
   list = []
-  call = arvados.api().pipeline_instances().list(filters=[["owner_uuid","=",owner_uuid]]).execute()
+  call = arvados.api().pipeline_instances().list(filters=[["owner_uuid","=",owner_uuid]], limit=1000).execute()
   for i in xrange(0,call['items_available']):
     if re.match(regex, call['items'][i]['name']):
-      list.append("%s %s" %( call['items'][i]['name'], call['items'][i]['uuid']))
+      list.append("%s %s %s" %( call['items'][i]['name'], call['items'][i]['uuid'], call['items'][i]['state']))
   list.sort()
   return list
 

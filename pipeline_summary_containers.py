@@ -17,7 +17,10 @@ def child_jobs_components_summary(cr_response):
     req = cr_response[i]
     c_item_uuid = req['container_uuid']
     c_item_container = arvados.api().containers().list(filters=[["uuid","=",c_item_uuid]]).execute()
-    state = c_item_container['items'][0]['exit_code']
+    try:
+      state = c_item_container['items'][0]['exit_code']
+    except:
+      continue
     if state != 0:
       print req['uuid'], c_item_uuid
       fails[req['uuid']] = c_item_uuid
