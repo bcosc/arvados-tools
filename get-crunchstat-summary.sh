@@ -15,14 +15,15 @@ fi
 
 if [[ $UUID =~ d1hrv ]]; then
   #source ~/cs-1128/bin/activate
-  source ~/10359-crunchstat-summary-serial-2/bin/activate
-  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format html #> $OUTDIR/$UUID/$UUID.html
-  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format text #> $OUTDIR/$UUID/$UUID.txt
+  #source ~/10359-crunchstat-summary-serial-2/bin/activate
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format html > $OUTDIR/$UUID/$UUID.html
+  ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --pipeline-instance $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi
 
 if [[ $UUID =~ 8i9sb ]]; then
-  #source ~/cs-1128/bin/activate
+  source ~/cs-1215/bin/activate
   #source ~/cs/bin/activate
+  #source ~/cs-819sb/bin/activate
   ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format html > $OUTDIR/$UUID/$UUID.html
   ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --job $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi
