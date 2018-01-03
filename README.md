@@ -9,6 +9,10 @@ Cancels all running jobs in an Arvados cluster.
 
 Walks you through printing out Data collections, pipeline instances and subprojects of an Arvados project.
 
+#### cluster-summary.py
+
+Prints out recently completed and currently running container requests and pipeline instances
+
 #### copy-cwl-pi.py
 
 This script allows users to take a CWL pipeline instance and copy child job outputs and log collections and the instance to another project.
