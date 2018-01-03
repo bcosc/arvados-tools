@@ -40,7 +40,7 @@ def main():
   fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "Running"]], limit=10).execute()
 
 
-  print("Currently running Container Requests")
+  print("Currently running Workflows")
   print("UUID, NAME, CREATED AT, OWNER PROJECT")
   for item in run_cr_response['items']:
     project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
@@ -50,7 +50,7 @@ def main():
     print("%s | %s | %s | %s" % (item['uuid'], item['name'], convert_time(item['created_at']), project_name))
   print("")
 
-  print("Recently finished Container Requests")
+  print("Recently finished Workflows")
   print("UUID, NAME, FINISHED AT, OWNER PROJECT")
   for item in fin_cr_response['items']:
     project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
