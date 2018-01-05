@@ -34,17 +34,21 @@ def check_fail(container_request_uuid):
 
 def main():
 
+  project_uuid = sys.argv[1]
+
   run_cr_response = arvados.api().container_requests().list(filters=[["state", "=", "Committed"],
                                                                      ["requesting_container_uuid", "=", None],
-                                                                     ["priority", ">", "0"]]).execute()
+                                                                     ["priority", ">", "0"],
+                                                                     ["owner_uuid","=",project_uuid]]).execute()
 
 
   fin_cr_response = arvados.api().container_requests().list(filters=[["state", "=", "Final"],
                                                                      ["requesting_container_uuid", "=", None],
-                                                                     ["priority", ">", "0"]], limit=25).execute()
+                                                                     ["priority", ">", "0"],
+                                                                     ["owner_uuid","=",project_uuid]]).execute()
 
-  run_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "=", "RunningOnServer"]]).execute()
-  fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "RunningOnServer"]], limit=10).execute()
+  run_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "=", "RunningOnServer"], ["owner_uuid","=",project_uuid]]).execute()
+  fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "RunningOnServer"], ["owner_uuid","=",project_uuid]]).execute()
 
 
   print("Currently running Workflows")
