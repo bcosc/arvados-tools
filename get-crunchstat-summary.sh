@@ -29,8 +29,9 @@ if [[ $UUID =~ 8i9sb ]]; then
 fi
 
 if [[ $UUID =~ xvhdp ]]; then
+  source ~/cs-1215/bin/activate
   #source ~/cs-1128/bin/activate
-  source ~/cs/bin/activate
+  #source ~/cs/bin/activate
   ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --container-request $UUID --format html > $OUTDIR/$UUID/$UUID.html
   ~/gitrepos/arvados/tools/crunchstat-summary/bin/crunchstat-summary --container-request $UUID --format text > $OUTDIR/$UUID/$UUID.txt
 fi

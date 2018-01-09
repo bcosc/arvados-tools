@@ -32,6 +32,17 @@ def check_fail(container_request_uuid):
   else:
     return 'Failed'
 
+def print_status(response):
+  try:
+    project_name = arvados.api().groups().list(filters=[["uuid","=",response['owner_uuid']]]).execute()['items'][0]['name']
+  except:
+    project_name = "None"
+  try:
+    status = check_fail(response['uuid'])
+  except:
+    status = response['state']
+  return "%s | %s | %s | %s | %s" % (response['uuid'], response['name'], convert_time(response['modified_at']), project_name, status)
+
 def main():
 
   run_cr_response = arvados.api().container_requests().list(filters=[["state", "=", "Committed"],
@@ -50,22 +61,17 @@ def main():
   print("Currently running Workflows")
   print("UUID, NAME, CREATED AT, OWNER PROJECT, STATUS")
   for item in run_cr_response['items']:
-    project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
-    print("%s | %s | %s | %s" % (item['uuid'], item['name'], convert_time(item['created_at']), project_name))
+    print(print_status(item))
   for item in run_pi_response['items']:
-    project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
-    print("%s | %s | %s | %s" % (item['uuid'], item['name'], convert_time(item['created_at']), project_name))
+    print(print_status(item))
   print("")
 
   print("Recently finished Workflows")
   print("UUID, NAME, FINISHED AT, OWNER PROJECT, STATUS")
   for item in fin_cr_response['items']:
-    project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
-    print("%s | %s | %s | %s | %s" % (item['uuid'], item['name'], convert_time(item['modified_at']), project_name, check_fail(item['uuid'])))
+    print(print_status(item))
   for item in fin_pi_response['items']:
-    project_name = arvados.api().groups().list(filters=[["uuid","=",item['owner_uuid']]]).execute()['items'][0]['name']
-    print("%s | %s | %s | %s | %s" % (item['uuid'], item['name'], convert_time(item['modified_at']), project_name, item['state']))
-
+    print(print_status(item))
 
 if __name__ == '__main__':
     main()

@@ -23,11 +23,14 @@ def container_request(uuid):
   print "CR_UUID, CR NAME, CR_OUTPUT_UUID, TRASHED_AT"
   for item in req_cs['items']:
     cr_output_uuid = item['output_uuid']
-    trash = arvados.api().collections().list(filters=[["uuid","=", cr_output_uuid]]).execute()['items'][0]['trash_at']
-    if not trash:
-      print item['uuid'], item['name'], cr_output_uuid, "Null"
-    else:
-      print item['uuid'], item['name'], cr_output_uuid, trash
+    try:
+      trash = arvados.api().collections().list(filters=[["uuid","=", cr_output_uuid]]).execute()['items'][0]['trash_at']
+      if not trash:
+        print item['uuid'], item['name'], cr_output_uuid, "Null"
+      else:
+        print item['uuid'], item['name'], cr_output_uuid, trash
+    except:
+      print "item['uuid'] does not have an output collection"
 
 def main():
 
