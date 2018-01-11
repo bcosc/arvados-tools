@@ -29,6 +29,8 @@ def check_fail(container_request_uuid):
   exit_code = arvados.api().containers().list(filters=[["uuid","=", container_uuid]]).execute()['items'][0]['exit_code']
   if exit_code == 0:
     return 'Complete'
+  elif exit_code == None:
+    return 'Running'
   else:
     return 'Failed'
 
@@ -52,7 +54,7 @@ def main():
 
   fin_cr_response = arvados.api().container_requests().list(filters=[["state", "=", "Final"],
                                                                      ["requesting_container_uuid", "=", None],
-                                                                     ["priority", ">", "0"]], limit=25).execute()
+                                                                     ["priority", ">", "0"]], limit=50).execute()
 
   run_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "=", "RunningOnServer"]]).execute()
   fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "RunningOnServer"]], limit=10).execute()
@@ -75,4 +77,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
