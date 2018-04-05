@@ -10,7 +10,7 @@ import sys
 def pipeline_instance(name):
   filter = "%" + name + "%"
   completes = ""
-  call = arvados.api().pipeline_instances().list(filters=[["name","like",filter]]).execute()
+  call = arvados.api().pipeline_instances().list(filters=[["name","like",filter]], limit=500).execute()
   total = call['items_available']
   if total != 0:
     print "Pipeline instance uuid, Pipeline instance name, Pipeline instance finish time"
@@ -23,7 +23,7 @@ def pipeline_instance(name):
 def container_request(name):
   filter = "%" + name + "%"
   completes = ""
-  cr = arvados.api().container_requests().list(filters=[["name","like",filter]]).execute()
+  cr = arvados.api().container_requests().list(filters=[["name","like",filter]], limit=500).execute()
   total = cr['items_available']
   if total != 0:
     print "Container request uuid, Container request name, Container request finish time"
