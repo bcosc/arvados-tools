@@ -27,10 +27,16 @@ def convert_time(rfc_time):
 def check_fail(container_request_uuid):
   container_uuid = arvados.api().container_requests().list(filters=[["uuid","=", container_request_uuid]]).execute()['items'][0]['container_uuid']
   exit_code = arvados.api().containers().list(filters=[["uuid","=", container_uuid]]).execute()['items'][0]['exit_code']
+  state = arvados.api().containers().list(filters=[["uuid","=", container_uuid]]).execute()['items'][0]['state']
   if exit_code == 0:
     return 'Complete'
-  elif exit_code == None:
-    return 'Running'
+  elif not exit_code:
+    if state == "Running":
+      return 'Running'
+    elif state == "Queued":
+      return 'Queued/Cancelled'
+    else:
+      return 'Cancelled'
   else:
     return 'Failed'
 
@@ -54,19 +60,20 @@ def main():
 
   fin_cr_response = arvados.api().container_requests().list(filters=[["state", "=", "Final"],
                                                                      ["requesting_container_uuid", "=", None],
-                                                                     ["priority", ">", "0"]], limit=50).execute()
+                                                                     ["priority", ">=", "0"]], limit=100).execute()
 
-  run_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "=", "RunningOnServer"]]).execute()
-  fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "RunningOnServer"]], limit=10).execute()
-
-
-  print("Currently running Workflows")
-  print("UUID, NAME, CREATED AT, OWNER PROJECT, STATUS")
-  for item in run_cr_response['items']:
-    print(print_status(item))
-  for item in run_pi_response['items']:
-    print(print_status(item))
-  print("")
+  try:
+    run_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "=", "RunningOnServer"]]).execute()
+    fin_pi_response = arvados.api().pipeline_instances().list(filters=[["state", "!=", "RunningOnServer"]], limit=10).execute()
+    print("Currently running Workflows")
+    print("UUID, NAME, CREATED AT, OWNER PROJECT, STATUS")
+    for item in run_cr_response['items']:
+      print(print_status(item))
+    for item in run_pi_response['items']:
+      print(print_status(item))
+    print("")
+  except:
+    pass
 
   print("Recently finished Workflows")
   print("UUID, NAME, FINISHED AT, OWNER PROJECT, STATUS")
