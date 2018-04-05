@@ -20,7 +20,7 @@ def container_request(uuid, patterns):
   cr = arvados.api().container_requests().list(filters=[["uuid", "=", cr_uuid]]).execute()
   c_uuid = cr.items()[1][1][0]['container_uuid']
   for pattern in patterns: #sys.argv[3:len(sys.argv)]:
-    req_cs = arvados.api().container_requests().list(filters=[["requesting_container_uuid","=",c_uuid], ["name","like", "%"+pattern+"%"]]).execute()
+    req_cs = arvados.api().container_requests().list(filters=[["requesting_container_uuid","=",c_uuid], ["name","like", "%"+pattern+"%"]], limit=1000).execute()
     for item in req_cs['items']:
       c_item_uuid = item['container_uuid']
       c_item_container = arvados.api().containers().list(filters=[["uuid","=",c_item_uuid]]).execute()
